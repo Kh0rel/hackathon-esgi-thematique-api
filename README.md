@@ -25,7 +25,7 @@ TODO :
   https://github.com/auth0/node-jsonwebtoken
   https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens
   OK - Get token
-  - Reload token
+  NO NEED (DECO INSTEAD)- Reload token
 
   POST :
     OK - inscription
@@ -39,12 +39,15 @@ TODO :
     - information about profil user
     - list accomplished by following (avatar following, name following, perf (exercice accomplished)) order by date (display only 50 ???)
     - current user accomplished
+    OK - list followers
+    OK - list following
+    - find user
 
   UPDATE :
-    - edit age
-    - edit fist name
-    - edit last name
-    - edit avatar
+    OK - edit age
+    OK - edit fist name
+    OK - edit last name
+    OK - edit avatar
 
   DELETE :
     - unfollow someone
@@ -52,8 +55,8 @@ TODO :
 
 
   CHALLENGE :
-    - get items
-    - buy items
-    - get history buy
+    OK - get items
+    OK - buy items
+    OK - get history buy
 
 ------------------

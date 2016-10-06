@@ -255,6 +255,64 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
       res.status(404).json({"Error" : true, "Message" : "nothing to insert"});
     }
   });
+
+
+  // UPDATE info user
+  // UPDATE table SET nom_colonne_1 = 'nouvelle valeur' WHERE condition
+  router.put("/update-user", function(req,res,next) {
+    // UPDATE user SET user_firstName = 'tata' WHERE user_id = 0;
+    var query = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
+    var table = ["user", req.body.toUpdate , req.body.value, "user_id" , req.body.idUser];
+    query = mysql.format(query,table);
+    console.log(query);
+    connection.query(query,function(err,rows) {
+       if (err) {
+         if (!req.body.toUpdate || !req.body.value || !req.body.idUser) {
+           res.status(409).json({"Error" : true, "code" : 409, "Message" : "Some field(s) are missing"});
+         } else {
+           res.status(500).json({"Error" : true, "code" : 500, "Message" : "Error executing MySQL query"});
+         }
+       } else {
+           res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+       }
+    });
+  });
+
+
+  //LIST FOLLOWERS
+  router.get("/followers/:idUser", function(req,res,next) {
+    //SELECT count(fr_id) FROM friend WHERE fr_follow = 1
+    var query = "SELECT count(fr_id) as followers FROM ?? WHERE ?? = ?"
+    var table = ["friend", "fr_follow", req.params.idUser];
+    query = mysql.format(query,table);
+    connection.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+
+
+  //LIST FOLLOWING
+  router.get("/following/:idUser", function(req,res,next) {
+    //SELECT count(fr_id) FROM friend WHERE fr_follow = 1
+    var query = "SELECT count(fr_id) as following FROM ?? WHERE ?? = ?"
+    var table = ["friend", "fr_following", req.params.idUser];
+    query = mysql.format(query,table);
+    connection.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+
+
+
+
 }
 
 module.exports = REST_ROUTER;
