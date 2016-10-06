@@ -53,7 +53,8 @@ REST.prototype.configureExpress = function(connection) {
 }
 
 REST.prototype.startServer = function() {
-      app.listen(3000,function(){
+  var port = process.env.PORT || 3000
+      app.listen(port,function(){
           console.log("Welcome \nhttp://localhost:3000/api_esgi_hackathon/");
       });
 
