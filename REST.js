@@ -551,6 +551,99 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
   });
 
 
+
+
+  router.get("/user-detail/:nameUser/:idUser", function(req,res,next) {
+
+    try {
+      var getInfoUser = new Promise((resolve, reject) => {
+        // SELECT * FROM user WHERE user_surname='tt'
+        var query = "SELECT * FROM ?? WHERE ?? = ?";
+        var table = ["user", "user_surname", req.params.nameUser];
+        query = mysql.format(query,table);
+        console.log(query);
+        connection.query(query,function(err,rows){
+          if (err) {
+            reject(err);
+            return;
+          } else {
+            console.log(rows[0]);
+            // var infoUser = rows[0];
+            // rows.infoUser = infoUser;
+            resolve(rows);
+          }
+        });
+      });
+
+      getInfoUser.then((rows) => {
+        var getFollows = new Promise((resolve, reject) => {
+          console.log('next');
+          console.log('idUser : ' + req.params.idUser);
+          console.log(rows);
+
+          var user_id = rows[0].user_id;
+          var user_avatar = rows[0].user_avatar;
+          var user_surname = rows[0].user_surname;
+          // GET FOLLOWERS AND FOLLOWING
+            // CHECK IF FOLLOW
+            // SELECT count(fr_id) FROM friend WHERE fr_follow=1 UNION SELECT count(fr_id) FROM friend WHERE fr_following=2
+          var query = "SELECT count(??) as result FROM ?? WHERE ??=? UNION ALL SELECT count(??) FROM ?? WHERE ??=? UNION ALL SELECT count(??) FROM ?? WHERE ??=? AND ??=? UNION ALL SELECT count(??) FROM ?? WHERE ??=? AND ??=?";
+          var table = ["fr_id", "friend", "fr_follow", req.params.idUser, "fr_id", "friend", "fr_following", rows[0].user_id, "fr_id", "friend", "fr_follow", req.params.idUser,
+          "fr_following", rows[0].user_id, "fr_id", "friend", "fr_follow", rows[0].user_id, "fr_following", req.params.idUser];
+          query = mysql.format(query,table);
+          connection.query(query,function(err,rows){
+            if(err) {
+              res.status(400).json({"Error" : true, "code": 400 ,"Message" : "Fields already in the table utilisateur_has_paris" });
+              reject(err);
+              return;
+            } else {
+              console.log('next');
+              rows.user_id = user_id;
+              rows.user_avatar = user_avatar;
+              rows.user_surname = user_surname;
+              console.log(rows[0].result);
+              rows.followers = rows[0].result;
+              rows.following = rows[1].result;
+              (rows[2].result == 1) ? rows.isFollow = true : rows.isFollow = false;
+              (rows[2].result == 1 && rows[3].result == 1) ? rows.reciproque = true : rows.reciproque = false;
+              console.log(rows);
+              var toto = rows;
+              // resolve(rows);
+              res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success",
+                "Result" : {
+                  user_id,
+                  user_avatar,
+                  user_surname,
+                  "followers": rows[0].result,
+                  "following": rows[1].result,
+                  "isFollow": rows.isFollow,
+                  "reciproque": rows.reciproque
+                }
+              });
+            }
+          });
+        });
+        /*
+        getFollows.then((rows) => {
+          console.log('toto');
+          console.log(rows);
+          var toto = rows;
+          console.log(toto);
+          if (!rows) {
+            return res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+          } else {
+            console.log('blbl');
+            return res.status(201).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : toto});
+          }
+        });
+        */
+      });
+    } catch (errr) {
+      res.status(500).json({"Error" : true, "Message" : "Error" });
+    }
+  });
+
+
 }
 
 module.exports = REST_ROUTER;
