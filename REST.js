@@ -310,7 +310,24 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     });
   });
 
-
+  //FIND USER
+  router.get("/find/:user", function(req,res,next) {
+    //SELECT count(fr_id) FROM friend WHERE fr_follow = 1
+    var query = "SELECT * FROM ?? WHERE ?? = ?"
+    var table = ["user", "user_surname", req.params.user];
+    query = mysql.format(query,table);
+    connection.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+          if (rows.length > 0) {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+          } else {
+            res.status(204).json({"Error" : false, "code" : 200, "Message" : "No user with this username"});
+          }
+        }
+    });
+  });
 
 
 }

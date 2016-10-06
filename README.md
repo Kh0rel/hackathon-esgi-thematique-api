@@ -41,7 +41,7 @@ TODO :
     - current user accomplished
     OK - list followers
     OK - list following
-    - find user
+    OK - find user
 
   UPDATE :
     OK - edit age
