@@ -24,11 +24,11 @@ npm test
 TODO :
   https://github.com/auth0/node-jsonwebtoken
   https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens
-  - Get token
+  OK - Get token
   - Reload token
 
   POST :
-    - inscription
+    OK - inscription
     - exercice if accomplished
     - follow someone
 
@@ -44,10 +44,16 @@ TODO :
     - edit age
     - edit fist name
     - edit last name
-    - edit avater
+    - edit avatar
 
   DELETE :
     - unfollow someone
     - exercice accomplished (user error ??)
+
+
+  CHALLENGE :
+    - get items
+    - buy items
+    - get history buy
 
 ------------------
