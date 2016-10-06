@@ -50,7 +50,7 @@ TODO :
     OK - edit avatar
 
   DELETE :
-    - unfollow someone
+    OK - unfollow someone
     - exercice accomplished (user error ??)
 
 
