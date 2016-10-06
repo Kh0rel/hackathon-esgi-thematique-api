@@ -30,7 +30,7 @@ TODO :
   POST :
     OK - inscription
     - exercice if accomplished
-    - follow someone
+    OK - follow someone
 
   GET :
     - location
