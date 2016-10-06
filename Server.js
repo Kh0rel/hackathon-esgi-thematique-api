@@ -15,12 +15,22 @@ REST.prototype.connectMysql = function() {
     var pool      =    mysql.createPool({
 
         // LOCAL
+        /*
         host     : 'localhost',
         user     : 'root',
         password : 'root',
         database : 'esgi-hackathon',
         socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
         debug    :  false
+        */
+        // GLOBAL
+        host     : 'eu-cdbr-west-01.cleardb.com',
+        user     : 'bbe68017d3e8d1',
+        password : '23f9d7aa',
+        database : 'heroku_7ac86b3c77abf49',
+        // socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
+        debug    :  false
+
     });
     pool.getConnection(function(err,connection){
         if(err) {

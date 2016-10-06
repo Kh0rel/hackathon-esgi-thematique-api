@@ -204,6 +204,8 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     console.log(req.body.length);
     if(req.body.length > 0) {
       for (var i = 0; i < req.body.length; i++) {
+      // WARP FUNCTION (i)
+      // CALL FUNCTION (i) in FOR
         try {
         var insertIntoUserBought = new Promise((resolve, reject) => {
           //INSERT INTO userBought (userBought_item, userBought_user, userBought_quantity) VALUES ('v1', 'v2', 'v3')
@@ -225,12 +227,14 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
               rows.idItem = idItem;
               rows.idUser = idUser;
               rows.quantity = quantity;
+              console.log(rows);
               resolve(rows);
             }
           });
         });
 
         insertIntoUserBought.then((rows) => {
+          console.log(rows);
           // UPDATE ITEMS QUANTITY
           // UPDATE table SET nom_colonne_1 = 'nouvelle valeur' WHERE condition
           var query = "UPDATE ?? SET ?? = ?? - ? WHERE ?? = ?"
@@ -241,6 +245,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
               if (err) {
                   res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
               } else {
+                console.log('toto');
                   res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
               }
           });
@@ -491,6 +496,60 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
           res.status(500).json({"Error" : true, "Message" : "Error" });
         }
   });
+
+  // GET EXERCICES FOR FRONT
+  router.get("/exercices", function(req,res,next) {
+    // SELECT * FROM exercice
+    // INNER JOIN location ON exercice.exer_idLocation = location.loc_id
+    // INNER JOIN position ON exercice.exer_idPosition = position.pos_id
+    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? INNER JOIN ?? ON ??.?? = ??.??"
+    var table = ["exercice", "location", "exercice", "exer_idLocation", "location", "loc_id", "position", "exercice", "exer_idPosition", "position", "pos_id"];
+    query = mysql.format(query,table);
+    console.log(query);
+    connection.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+
+  router.get("/exercices", function(req,res,next) {
+    // SELECT * FROM exercice
+    // INNER JOIN location ON exercice.exer_idLocation = location.loc_id
+    // INNER JOIN position ON exercice.exer_idPosition = position.pos_id
+    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? INNER JOIN ?? ON ??.?? = ??.??"
+    var table = ["exercice", "location", "exercice", "exer_idLocation", "location", "loc_id", "position", "exercice", "exer_idPosition", "position", "pos_id"];
+    query = mysql.format(query,table);
+    console.log(query);
+    connection.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+
+  router.get("/exercice-detail/:idUser/:exName", function(req,res,next) {
+    // SELECT * FROM exercice
+    // INNER JOIN accomplished ON exercice.exer_id = accomplished.a_idExercice
+    // WHERE a_idUser = 1 AND exer_name = 'ex1'
+    var query = "SELECT * FROM ?? INNER JOIN  ON ??.?? = ??.?? WHERE ?? = ? AND ?? = TRIM(?)"
+    console.log(typeof req.body.exName);
+    var table = ["exercice", "accomplished", "exercice", "exer_id", "accomplished", "a_idExercice", "a_idUser", req.body.idUser, "exer_name", req.body.exName];
+    query = mysql.format(query,table);
+    console.log(query);
+    connection.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+
 
 }
 

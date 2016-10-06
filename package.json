@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "scripts": {
     "start": "node Server.js",
-    "test": "mocha --timeout 5000"
+    "test": "mocha --timeout 5000",
+    "postinstall": "mocha"
   },
   "dependencies": {
     "MD5": "~1.2.1",
