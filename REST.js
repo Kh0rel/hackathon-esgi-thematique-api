@@ -168,6 +168,8 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
 
 
   /* ITEMS AND BUY */
+
+  //GET ALL ITEMS
   router.get("/items", function(req,res,next) {
     //SELECT idParis, coteEquipe1, coteEquipe2, equipe1Paris, equipe2Paris FROM paris;
     var query = "SELECT * FROM ??"
@@ -182,6 +184,35 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     });
   });
 
+  //GET ITEMS BOUGHT BY A USER
+  router.get("/item-history/:idUser", function(req,res,next) {
+    // SELECT * FROM userBought INNER JOIN item WHERE userBought.userBought_item = item.item_id AND userBought_user = 0;
+    // req.params.idUser
+    var query = "SELECT * FROM ?? INNER JOIN ?? WHERE ??.?? = ??.?? AND ?? = ?;"
+    var table = ["userBought", "item", "userBought", "userBought_item", "item", "item_id", "userBought_user", req.params.idUser ];
+    query = mysql.format(query,table);
+    connection.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+
+  router.post("/buy-items", function(req, res, next) {
+    console.log('toto');
+    console.log(req.body.length);
+    if(req.body.length > 0) {
+      console.log('ok');
+      for (var i = 0; i < req.body.length; i++) {
+        console.log('--');
+        console.log(req.body[i]);
+      }
+    } else {
+      res.status(404).json({"Error" : true, "Message" : "nothing to insert"});
+    }
+  });
 }
 
 module.exports = REST_ROUTER;
