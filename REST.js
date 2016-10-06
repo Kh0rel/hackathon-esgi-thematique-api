@@ -201,13 +201,55 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
   });
 
   router.post("/buy-items", function(req, res, next) {
-    console.log('toto');
     console.log(req.body.length);
     if(req.body.length > 0) {
-      console.log('ok');
       for (var i = 0; i < req.body.length; i++) {
-        console.log('--');
-        console.log(req.body[i]);
+        try {
+        var insertIntoUserBought = new Promise((resolve, reject) => {
+          //INSERT INTO userBought (userBought_item, userBought_user, userBought_quantity) VALUES ('v1', 'v2', 'v3')
+          var query = "INSERT INTO ?? (??, ??, ??) VALUES (?, ?, ?)"
+          var table = ["userBought", "userBought_item", "userBought_user", "userBought_quantity", req.body[i].idItem, req.body[i].idUser, req.body[i].quantity];
+          query = mysql.format(query,table);
+          console.log(query);
+          //prepare to add in rows
+          var idItem = req.body[i].idItem;
+          var idUser = req.body[i].idUser;
+          var quantity = req.body[i].quantity;
+          connection.query(query, function(err,rows){
+            if (err) {
+              console.log('error insert 1');
+              reject(err);
+              return;
+            } else {
+              //add in rows
+              rows.idItem = idItem;
+              rows.idUser = idUser;
+              rows.quantity = quantity;
+              resolve(rows);
+            }
+          });
+        });
+
+        insertIntoUserBought.then((rows) => {
+          // UPDATE ITEMS QUANTITY
+          // UPDATE table SET nom_colonne_1 = 'nouvelle valeur' WHERE condition
+          var query = "UPDATE ?? SET ?? = ?? - ? WHERE ?? = ?"
+          var table = ["item", "item_quantity", "item_quantity", rows.quantity, "item_id", rows.idItem];
+          query = mysql.format(query,table);
+          console.log(query);
+          connection.query(query,function(err,rows){
+              if (err) {
+                  res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+              } else {
+                  res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+              }
+          });
+
+        });
+      } catch (errr) {
+        res.status(500).json({"Error" : true, "Message" : "Error" });
+      }
+
       }
     } else {
       res.status(404).json({"Error" : true, "Message" : "nothing to insert"});
