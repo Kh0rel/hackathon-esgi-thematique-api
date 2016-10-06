@@ -404,6 +404,223 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     });
   });
 
+
+  // USER RATE EXERCICE
+  /*
+  router.post("/rate", function(req,res,next) {
+    var currentDate = new Date().toLocaleString();
+
+    try {
+      var insertRate = new Promise((resolve, reject) => {
+        var query = "INSERT INTO ?? (??, ??, ??, ??) VALUES (?, ?, ?, ?)"
+        var table = ["rate", "rate_idExercice", "rate_idUser", "rate_value", "rate_date", req.body.idExercice, req.body.idUser, req.body.userRate, currentDate];
+        query = mysql.format(query,table);
+
+        var idExercice = req.body.idExercice;
+        var idUser = req.body.idUser;
+        var userRate = req.body.userRate;
+        var currentDate = new Date().toLocaleString();
+
+        connection.query(query,function(err,rows) {
+          if (err) {
+            reject(err);
+            return;
+          } else {
+            //add in rows
+            rows.idExercice = idExercice;
+            rows.idUser = idUser;
+            rows.userRate = userRate;
+            rows.currentDate = currentDate;
+            console.log(rows);
+            resolve(rows);
+          }
+        });
+      });
+
+      insertRate.then((rows) => {
+        console.log('then 1');
+        console.log(rows);
+        var getNbVoteForThis = new Promise((resolve, reject) => {
+          //SELECT count(rate_idExercice) as nbVote FROM rate WHERE rate_idExercice = 1;
+          var query = "SELECT count(??) as ??,  FROM ?? WHERE ?? = ?"
+          var table = ["rate_idExercice", "nbVote", "rate", "rate_idExercice", req.body.idExercice];
+          query = mysql.format(query,table);
+          console.log(query);
+          //prepare to add in rows and insert data
+
+          connection.query(query, function(err,rows){
+            if (err) {
+              reject(err);
+              return;
+            } else {
+              //add in rows
+              console.log(rows);
+              resolve(rows);
+            }
+          });
+        });
+        });
+        //GET CURRENT RATE OF EXERCICE
+
+        getNbVoteForThis.then((rows) => {
+
+          var getCurrentRate = new Promise((resolve, reject) => {
+            // SELECT exer_rate FROM exercice;
+            console.log('AFTER : ');
+            console.log(rows);
+            var query = "SELECT ?? FROM ??";
+            var table = ["exer_rate", "exercice"];
+            query = mysql.format(query,table);
+            connection.query(query,function(err,rows){
+                if(err) {
+                  res.status(400).json({"Error" : true, "code": 400 ,"Message" : "Fields already in the table utilisateur_has_paris" });
+                  reject(err);
+                  return;
+                } else {
+                  resolve(rows);
+                }
+            });
+          });
+
+      });
+
+
+
+
+
+
+
+
+
+
+        console.log(rows);
+        console.log(rows[0].nbVote);
+        console.log(rows.idExercice);
+        console.log(rows.idUser);
+        console.log(rows.currentDate);
+        console.log(rows.userRate);
+
+        if (rows[0].nbVote) {
+          // CALC NEW RATE
+          var newRate = (rows.userRate * rows[0].nbVote) +
+        } else {
+          // INSERT DIRECTLY NEW DATE
+        }
+        //CALC
+        // INSERT INTO EXERCICE (with new vote insert)
+
+        var query = "UPDATE ?? SET ?? = ?? - ? WHERE ?? = ?"
+        var table = ["item", "item_quantity", "item_quantity", rows.quantity, "item_id", rows.idItem];
+        query = mysql.format(query,table);
+        console.log(query);
+        connection.query(query,function(err,rows){
+            if (err) {
+                res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+            } else {
+                res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+            }
+        });
+
+      }
+    } catch (errr) {
+      res.status(500).json({"Error" : true, "Message" : "Error" });
+    }
+
+  });
+  */
+
+
+
+
+
+  // USER RATE EXERCICE
+  router.post("/rate", function(req,res,next) {
+    try {
+      var addRate = new Promise((resolve, reject) => {
+
+        var idExercice = req.body.idExercice;
+        var idUser = req.body.idUser;
+        var userRate = req.body.userRate;
+        var currentDate = new Date().toLocaleString();
+
+        var query = "INSERT INTO ?? (??, ??, ??, ??) VALUES (?, ?, ?, ?)"
+        var table = ["rate", "rate_idExercice", "rate_idUser", "rate_value", "rate_date", req.body.idExercice, req.body.idUser, req.body.userRate, currentDate];
+        query = mysql.format(query,table);
+        connection.query(query,function(err,rows) {
+          if (err) {
+            reject(err);
+            return;
+          } else {
+            //add in rows
+            rows.idExercice = idExercice;
+            rows.idUser = idUser;
+            rows.userRate = userRate;
+            rows.currentDate = currentDate;
+            console.log(rows);
+            resolve(rows);
+          }
+        });
+      });
+
+      addRate.then((rows) => {
+        var getNbVote = new Promise((resolve, reject) => {
+
+          var idExercice2 = rows.idExercice;
+          var idUser2 = rows.idUser;
+          var userRate2 = rows.userRate;
+          var currentDate2 = rows.currentDate;
+          console.log('ex2 : ' + idExercice2);
+
+          //SELECT count(rate_idExercice) as nbVote FROM rate WHERE rate_idExercice = 1;
+          var query = "SELECT count(??) as ?? FROM ?? WHERE ?? = ?"
+          var table = ["rate_idExercice", "nbVote", "rate", "rate_idExercice", rows.idExercice];
+          query = mysql.format(query,table);
+          console.log(query);
+          //prepare to add in rows and insert data
+
+          connection.query(query, function(err,rows){
+            if (err) {
+              reject(err);
+              return;
+            } else {
+              //add in rows
+              rows.idExercice = idExercice2;
+              rows.idUser = idUser2;
+              rows.userRate = userRate2;
+              rows.currentDate = currentDate2;
+              console.log(rows);
+              resolve(rows);
+            }
+          });
+        });
+
+        getNbVote.then((rows) => {
+          //UPDATE RATE IN EXERCICE TABLE
+          console.log('final rows');
+          console.log(rows);
+          console.log(rows[0].nbVote);
+          // INSERT INTO exercice (exer_rate) VALUES ();
+           //UPDATE utilisateur SET nombreJetonUtilisateur = nombreJetonUtilisateur-10 WHERE idUtilisateur=2
+          var query = "UPDATE ?? SET ?? = (((??*?)+?)/(?+1)) WHERE ?? = ?"
+          var table = ["exercice", "exer_rate", "exer_rate", rows[0].nbVote, rows.userRate, rows[0].nbVote, "exer_id", rows.idExercice];
+          query = mysql.format(query,table);
+          console.log(query);
+          connection.query(query,function(err,rows){
+              if (err) {
+                  res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+              } else {
+                  res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+              }
+          });
+        });
+      });
+
+
+    } catch (errr) {
+          res.status(500).json({"Error" : true, "Message" : "Error" });
+        }
+  });
+
 }
 
 module.exports = REST_ROUTER;

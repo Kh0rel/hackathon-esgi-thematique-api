@@ -25,18 +25,19 @@ TODO :
   https://github.com/auth0/node-jsonwebtoken
   https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens
   OK - Get token
-  NO NEED (DECO INSTEAD)- Reload token
+  NO NEED (DECO INSTEAD) - Reload token
 
   POST :
     OK - inscription
     - exercice if accomplished
     OK - follow someone
+    - rate exercice
 
   GET :
     - location
     - position
     - exercice
-    - information about profil user
+    OK - information about profil user
     - list accomplished by following (avatar following, name following, perf (exercice accomplished)) order by date (display only 50 ???)
     - current user accomplished
     OK - list followers
@@ -52,7 +53,6 @@ TODO :
   DELETE :
     OK - unfollow someone
     - exercice accomplished (user error ??)
-
 
   CHALLENGE :
     OK - get items
