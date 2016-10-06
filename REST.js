@@ -11,6 +11,10 @@ function REST_ROUTER(router,connection,md5) {
     self.handleRoutes(router,connection,md5);
 }
 
+function secret() {
+  return 'THE_SECRET';
+}
+
 function getDate(){
     var today = new Date();
     var dd = today.getDate();
