@@ -389,6 +389,21 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
   });
 
 
+  //GET INFORMATIONS USER
+  router.get("/user/:idUser", function(req,res,next) {
+    // SELECT "user_avatar", "user_age", "user_firstName", "user_lastName", "user_mail", "user_points", "user_surname", "user_subDate" FROM user;
+    var query = "SELECT ??, ??, ??, ??, ??, ??, ??, ?? FROM ?? WHERE ?? = ?"
+    var table = ["user_avatar", "user_age", "user_firstName", "user_lastName", "user_mail", "user_points", "user_surname", "user_subDate", "user", "user_id", req.params.idUser];
+    query = mysql.format(query,table);
+    connection.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+
 }
 
 module.exports = REST_ROUTER;
