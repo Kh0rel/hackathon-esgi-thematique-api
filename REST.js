@@ -325,8 +325,49 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
         }
     });
   });
-  //UNFOLLOW SOMEONE
 
+
+  //UNFOLLOW SOMEONE
+  router.delete("/unfollow/:idUser/:toUnFollow", function(req,res,next) {
+    try {
+      //GET ID FOLLOW FOR SAFE MODE
+      var getIDFollow = new Promise((resolve, reject) => {
+        // SELECT fr_id FROM friend WHERE fr_follow = 1 AND fr_following = 4
+        var query = "SELECT ?? FROM ?? WHERE ?? = ? AND ?? = ?"
+        var table = ["fr_id", "friend", "fr_follow", req.params.idUser, "fr_following", req.params.toUnFollow];
+        query = mysql.format(query,table);
+        connection.query(query, function(err,rows){
+          if (err) {
+            console.log('error insert 1');
+            reject(err);
+            return;
+          } else {
+            resolve(rows);
+          }
+        });
+      });
+
+      getIDFollow.then((rows) => {
+        // DELETE FROM `friend` WHERE fr_id = XX
+        var query = "DELETE FROM ?? WHERE ?? = ?"
+        var table = ["friend", "fr_id", rows[0].fr_id];
+        query = mysql.format(query,table);
+        connection.query(query,function(err,rows){
+            if (err) {
+                res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+            } else {
+                res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+            }
+        });
+      });
+    } catch(errr) {
+      res.status(500).json({"Error" : true, "Message" : "Error" });
+    }
+
+
+
+
+  });
 
   //FIND USER
   router.get("/find/:user", function(req,res,next) {
