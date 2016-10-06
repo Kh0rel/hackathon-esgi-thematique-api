@@ -31,7 +31,7 @@ TODO :
     OK - inscription
     - exercice if accomplished
     OK - follow someone
-    - rate exercice
+    OK - rate exercice
 
   GET :
     - location
