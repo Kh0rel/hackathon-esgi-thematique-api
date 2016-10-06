@@ -294,7 +294,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     });
   });
 
-
   //LIST FOLLOWING
   router.get("/following/:idUser", function(req,res,next) {
     //SELECT count(fr_id) FROM friend WHERE fr_follow = 1
@@ -309,6 +308,25 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
         }
     });
   });
+
+  //FOLLOW SOMEONE
+  router.post("/follow/:idUser/:toFollow", function(req,res,next) {
+    // INSERT INTO friend (fr_follow, fr_following, fr_date) VALUES (req.params.idUser, req.params.toFollow, currentDate)
+    var currentDate = new Date().toLocaleString();
+    var query = "INSERT INTO ?? (??, ??, ??) VALUES (?, ?, ?)"
+    var table = ["friend", "fr_follow", "fr_following", "fr_date", req.params.idUser, req.params.toFollow, currentDate];
+    query = mysql.format(query,table);
+    console.log(query);
+    connection.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+  //UNFOLLOW SOMEONE
+
 
   //FIND USER
   router.get("/find/:user", function(req,res,next) {
