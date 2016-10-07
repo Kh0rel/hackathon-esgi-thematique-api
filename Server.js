@@ -38,6 +38,7 @@ REST.prototype.connectMysql = function() {
         } else {
           self.configureExpress(connection);
         }
+        // connection.release();
     });
 }
 
@@ -53,7 +54,8 @@ REST.prototype.configureExpress = function(connection) {
 }
 
 REST.prototype.startServer = function() {
-  var port = process.env.PORT;
+  // var port = process.env.PORT;
+  var port = 3000;
   app.listen(port,function(){
       console.log("Welcome");
   });

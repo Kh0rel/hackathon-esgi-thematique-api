@@ -68,6 +68,8 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
               res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
           } else {
               res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+              connection.release();
+              console.log('tt');
           }
       });
     });
