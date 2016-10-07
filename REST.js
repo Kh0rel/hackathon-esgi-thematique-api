@@ -69,7 +69,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
           } else {
               res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
           }
-          connection.end();
+          connection.release();
       });
     });
     /* END TRY ZONE */
@@ -274,6 +274,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
         } else {
             res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
         }
+        connection.release();
     });
   });
 
@@ -289,6 +290,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
         } else {
             res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
         }
+        connection.release();
     });
   });
 
