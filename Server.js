@@ -34,6 +34,8 @@ REST.prototype.connectMysql = function() {
     });
     pool.getConnection(function(err,connection){
         if(err) {
+          console.log('err maggle');
+          console.log(err);
           self.stop(err);
         } else {
           self.configureExpress(connection);
