@@ -48,7 +48,7 @@ function checkToken(req, res, next) {
   }
 }
 
-REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
+REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var self = this;
 
     // TEST ROUTE WHEN UP

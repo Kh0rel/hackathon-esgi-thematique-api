@@ -59,8 +59,8 @@ REST.prototype.configureExpress = function(pool) {
 }
 
 REST.prototype.startServer = function() {
-  var port = process.env.PORT;
-  // var port = 3000;
+  // var port = process.env.PORT;
+  var port = 3000;
   app.listen(port,function(){
       console.log("Welcome");
   });
