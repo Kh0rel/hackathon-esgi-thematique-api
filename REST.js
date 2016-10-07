@@ -469,8 +469,9 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     // SELECT * FROM exercice
     // INNER JOIN location ON exercice.exer_idLocation = location.loc_id
     // INNER JOIN position ON exercice.exer_idPosition = position.pos_id
-    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? INNER JOIN ?? ON ??.?? = ??.??"
+    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? INNER JOIN ?? ON ??.?? = ??.??";
     var table = ["exercice", "location", "exercice", "exer_idLocation", "location", "loc_id", "position", "exercice", "exer_idPosition", "position", "pos_id"];
+
     query = mysql.format(query,table);
     pool.query(query,function(err,rows){
         if (err) {
@@ -480,6 +481,47 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
         }
     });
   });
+
+  router.get("/exercicesl/:location", function(req,res,next) {
+    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? INNER JOIN ?? ON ??.?? = ??.?? AND exer_idLocation = ?";
+    var table = ["exercice", "location", "exercice", "exer_idLocation", "location", "loc_id", "position", "exercice", "exer_idPosition", "position", "pos_id", req.params.location];
+    query = mysql.format(query,table);
+    pool.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+
+  router.get("/exercicesp/:position", function(req,res,next) {
+    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? INNER JOIN ?? ON ??.?? = ??.?? AND exer_idPosition = ?";
+    var table = ["exercice", "location", "exercice", "exer_idLocation", "location", "loc_id", "position", "exercice", "exer_idPosition", "position", "pos_id", req.params.position];
+    query = mysql.format(query,table);
+    pool.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+
+  router.get("/exerciceslp/:position/:location", function(req,res,next) {
+    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? INNER JOIN ?? ON ??.?? = ??.?? AND exer_idLocation = ? AND exer_idPosition = ?";
+    var table = ["exercice", "location", "exercice", "exer_idLocation", "location", "loc_id", "position", "exercice", "exer_idPosition", "position", "pos_id", req.params.location, req.params.position];
+    query = mysql.format(query,table);
+    pool.query(query,function(err,rows){
+        if (err) {
+            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+        } else {
+            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+        }
+    });
+  });
+
+
 
   router.get("/exercice-detail/:idUser/:exName", function(req,res,next) {
     // SELECT * FROM exercice
@@ -567,9 +609,9 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
   });
 
   // FIL D ACTUALITE
-  router.get("/news-feed/:listF", function(req,res,next) {
+  router.get("/news-feed/:listF/", function(req,res,next) {
     //SELECT * FROM exercice INNER JOIN accomplished ON exercice.exer_id = accomplished.a_idExercice WHERE a_idUser in (1,2,3) <- this is the list of follwers
-    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? WHERE ?? in (1,2,3)"
+    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? WHERE ?? in (?) ORDER BY a_date DESC"
     var table = ["exercice", "accomplished", "exercice", "exer_id", "accomplished", "a_idExercice", "a_idUser", req.params.listF];
     query = mysql.format(query,table);
     pool.query(query,function(err,rows){
