@@ -59,4 +59,10 @@ TODO :
     OK - buy items
     OK - get history buy
 
+
+
+    MES accomplished
+    accomplished de MES following
+    === BOTH MIXED done
+
 ------------------

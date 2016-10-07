@@ -75,11 +75,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
 
 
 
-
-
-
-
-
     router.post("/authenticate", function(req,res) {
     // SELECT count(*) as auth FROM user WHERE user_mail = 'toto@toto.com' AND user_pwd = 'toto'
     //        UNION SELECT user_id FROM user WHERE user_mail = 'toto@toto.com' AND user_pwd = 'toto'
@@ -287,7 +282,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
   //LIST FOLLOWERS
   router.get("/followers/:idUser", function(req,res,next) {
     //SELECT count(fr_id) FROM friend WHERE fr_follow = 1
-    var query = "SELECT count(fr_id) as followers FROM ?? WHERE ?? = ?"
+    var query = "SELECT fr_following FROM ?? WHERE ?? = ?"
     var table = ["friend", "fr_follow", req.params.idUser];
     query = mysql.format(query,table);
     connection.query(query,function(err,rows){
@@ -302,7 +297,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
   //LIST FOLLOWING
   router.get("/following/:idUser", function(req,res,next) {
     //SELECT count(fr_id) FROM friend WHERE fr_follow = 1
-    var query = "SELECT count(fr_id) as following FROM ?? WHERE ?? = ?"
+    var query = "SELECT fr_follow as following FROM ?? WHERE ?? = ?"
     var table = ["friend", "fr_following", req.params.idUser];
     query = mysql.format(query,table);
     connection.query(query,function(err,rows){
@@ -505,24 +500,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? INNER JOIN ?? ON ??.?? = ??.??"
     var table = ["exercice", "location", "exercice", "exer_idLocation", "location", "loc_id", "position", "exercice", "exer_idPosition", "position", "pos_id"];
     query = mysql.format(query,table);
-    console.log(query);
-    connection.query(query,function(err,rows){
-        if (err) {
-            res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
-        } else {
-            res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
-        }
-    });
-  });
-
-  router.get("/exercices", function(req,res,next) {
-    // SELECT * FROM exercice
-    // INNER JOIN location ON exercice.exer_idLocation = location.loc_id
-    // INNER JOIN position ON exercice.exer_idPosition = position.pos_id
-    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? INNER JOIN ?? ON ??.?? = ??.??"
-    var table = ["exercice", "location", "exercice", "exer_idLocation", "location", "loc_id", "position", "exercice", "exer_idPosition", "position", "pos_id"];
-    query = mysql.format(query,table);
-    console.log(query);
     connection.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
@@ -641,6 +618,37 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     } catch (errr) {
       res.status(500).json({"Error" : true, "Message" : "Error" });
     }
+  });
+
+  // FIL D ACTUALITE
+  router.get("/news-feed/:listF", function(req,res,next) {
+    //SELECT * FROM exercice INNER JOIN accomplished ON exercice.exer_id = accomplished.a_idExercice WHERE a_idUser in (1,2,3) <- this is the list of follwers
+    var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? WHERE ?? in (1,2,3)"
+    var table = ["exercice", "accomplished", "exercice", "exer_id", "accomplished", "a_idExercice", "a_idUser", req.params.listF];
+    query = mysql.format(query,table);
+    connection.query(query,function(err,rows){
+      if (err) {
+        res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+      } else {
+        res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+      }
+    });
+  });
+
+  // PUBLISH ACCOMPLISHED
+  router.post("/accomplished", function(req,res,next) {
+    // INSERT INTO `accomplished` (`a_idUser`, `a_idExercice`, `a_date`) VALUES (1, 1, '2016-10-07 02:23:58')
+    var currentDate = new Date().toLocaleString();
+    var query = "INSERT INTO ?? (??, ??, ??) VALUES (?, ?, ?)"
+    var table = ["accomplished", "a_idUser", "a_idExercice", "a_date", req.body.idUser, req.body.idExercice, currentDate];
+    query = mysql.format(query,table);
+    connection.query(query,function(err,rows){
+      if (err) {
+        res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+      } else {
+        res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
+      }
+    });
   });
 
 
