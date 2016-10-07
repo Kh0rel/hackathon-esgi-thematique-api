@@ -4,17 +4,11 @@ var bodyParser   = require("body-parser");
 var md5          = require('MD5');
 var rest         = require("./REST.js");
 var app          = express();
-var http         = require("http");
 
 function REST(){
     var self = this;
     self.connectMysql();
 };
-
-setInterval(function() {
-    http.get("https://hackathon-esgi.herokuapp.com/api_esgi_hackathon/test");
-}, 20000);
-
 
 REST.prototype.connectMysql = function() {
     var self = this;
