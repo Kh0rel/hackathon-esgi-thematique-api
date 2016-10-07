@@ -65,7 +65,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
       query = mysql.format(query,table);
       connection.query(query,function(err,rows){
           if (err) {
-              res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
+              res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query", "Result": err});
           } else {
               res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
           }
