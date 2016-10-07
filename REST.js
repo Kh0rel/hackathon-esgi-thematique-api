@@ -69,7 +69,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
           } else {
               res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
               connection.release();
-              console.log('tt');
           }
       });
     });
