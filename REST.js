@@ -6,9 +6,9 @@ var upload = multer({ dest: 'uploads/' });
 // https://www.codementor.io/tips/9172397814/setup-file-uploading-in-an-express-js-application-using-multer-js
 // https://ewiggin.gitbooks.io/expressjs-middleware/content/multer.html
 
-function REST_ROUTER(router,connection,md5) {
+function REST_ROUTER(router,pool,md5) {
     var self = this;
-    self.handleRoutes(router,connection,md5);
+    self.handleRoutes(router,pool,md5);
 }
 
 function secret() {
@@ -63,13 +63,12 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
       var query = "SELECT * FROM ??"
       var table = ["user"];
       query = mysql.format(query,table);
-      connection.query(query,function(err,rows){
+      pool.query(query,function(err,rows){
           if (err) {
               res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query", "Result": err});
           } else {
               res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
           }
-          connection.release();
       });
     });
     /* END TRY ZONE */
@@ -268,13 +267,12 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     var query = "SELECT fr_following FROM ?? WHERE ?? = ?"
     var table = ["friend", "fr_follow", req.params.idUser];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
         } else {
             res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
         }
-        connection.release();
     });
   });
 
@@ -290,7 +288,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
         } else {
             res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
         }
-        connection.release();
     });
   });
 

@@ -32,6 +32,8 @@ REST.prototype.connectMysql = function() {
         debug    :  false
 
     });
+    self.configureExpress(pool);
+    /*
     pool.getConnection(function(err,connection){
         if(err) {
           console.log('err maggle');
@@ -42,15 +44,16 @@ REST.prototype.connectMysql = function() {
         }
         // connection.release();
     });
+    */
 }
 
-REST.prototype.configureExpress = function(connection) {
+REST.prototype.configureExpress = function(pool) {
       var self = this;
       app.use(bodyParser.urlencoded({ extended: true }));
       app.use(bodyParser.json());
       var router = express.Router();
       app.use('/api_esgi_hackathon', router);
-      var rest_router = new rest(router,connection,md5);
+      var rest_router = new rest(router,pool,md5);
 
       self.startServer();
 }
