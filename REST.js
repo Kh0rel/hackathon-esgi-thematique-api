@@ -82,7 +82,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     var query = "SELECT count(*) as auth FROM ?? WHERE ?? = ? AND ?? = ? UNION SELECT ?? FROM ?? WHERE ?? = ? AND ?? = ?";
     var table = ["user", "user_mail", req.body.email, "user_pwd", req.body.pwd, "user_id", "user", "user_mail", req.body.email, "user_pwd", req.body.pwd];
     query = mysql.format(query,table);
-    console.log(query);
     connection.query(query,function(err,rows){
       if (err) {
           res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
@@ -110,22 +109,16 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
             var query = "SELECT * FROM ?? WHERE ?? = ?"
             var table = ["user", "user_mail", req.body.email];
             query = mysql.format(query,table);
-            console.log(query);
             connection.query(query,function(err,rows){
               if (err) {
-                console.log('toto');
                 reject(err);
                 return;
               } else {
-                console.log('to');
-                console.log(rows[0]);
                 if (rows[0] !== undefined) {
-                  console.log('already in');
                   res.status(400).json({"Error" : true, "code": 400 ,"Message" : "exist" });
                   reject(err);
                   return;
                 } else {
-                  console.log('ok');
                   resolve(rows);
                 }
               }
@@ -134,7 +127,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
 
           CheckIfAlreadyRegister.then((rows) => {
             var currentDate = new Date().toLocaleString();
-            console.log(currentDate);
             if (!req.body.avatar) {
               req.body.avatar = '';
             }
@@ -143,8 +135,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
               var query = "INSERT INTO ?? (??, ??, ??, ??, ??, ??, ??, ??, ??) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
               var table = ["user", "user_firstName", "user_lastName", "user_subDate", "user_pwd", "user_avatar", "user_age", "user_mail", "user_surname", "user_isPremium", req.body.firstName, req.body.lastName, currentDate, req.body.pwd, req.body.avatar, req.body.age, req.body.email, req.body.surname, 0];
               query = mysql.format(query,table);
-              console.log(query);
-
               connection.query(query,function(err,rows){
                   if (err) {
                       res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
@@ -196,7 +186,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
   });
 
   router.post("/buy-items", function(req, res, next) {
-    console.log(req.body.length);
     if(req.body.length > 0) {
       for (var i = 0; i < req.body.length; i++) {
       // WARP FUNCTION (i)
@@ -207,14 +196,12 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
           var query = "INSERT INTO ?? (??, ??, ??) VALUES (?, ?, ?)"
           var table = ["userBought", "userBought_item", "userBought_user", "userBought_quantity", req.body[i].idItem, req.body[i].idUser, req.body[i].quantity];
           query = mysql.format(query,table);
-          console.log(query);
           //prepare to add in rows
           var idItem = req.body[i].idItem;
           var idUser = req.body[i].idUser;
           var quantity = req.body[i].quantity;
           connection.query(query, function(err,rows){
             if (err) {
-              console.log('error insert 1');
               reject(err);
               return;
             } else {
@@ -222,25 +209,21 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
               rows.idItem = idItem;
               rows.idUser = idUser;
               rows.quantity = quantity;
-              console.log(rows);
               resolve(rows);
             }
           });
         });
 
         insertIntoUserBought.then((rows) => {
-          console.log(rows);
           // UPDATE ITEMS QUANTITY
           // UPDATE table SET nom_colonne_1 = 'nouvelle valeur' WHERE condition
           var query = "UPDATE ?? SET ?? = ?? - ? WHERE ?? = ?"
           var table = ["item", "item_quantity", "item_quantity", rows.quantity, "item_id", rows.idItem];
           query = mysql.format(query,table);
-          console.log(query);
           connection.query(query,function(err,rows){
               if (err) {
                   res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
               } else {
-                console.log('toto');
                   res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : rows});
               }
           });
@@ -264,7 +247,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     var query = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
     var table = ["user", req.body.toUpdate , req.body.value, "user_id" , req.body.idUser];
     query = mysql.format(query,table);
-    console.log(query);
     connection.query(query,function(err,rows) {
        if (err) {
          if (!req.body.toUpdate || !req.body.value || !req.body.idUser) {
@@ -316,7 +298,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     var query = "INSERT INTO ?? (??, ??, ??) VALUES (?, ?, ?)"
     var table = ["friend", "fr_follow", "fr_following", "fr_date", req.params.idUser, req.params.toFollow, currentDate];
     query = mysql.format(query,table);
-    console.log(query);
     connection.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
@@ -338,7 +319,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
         query = mysql.format(query,table);
         connection.query(query, function(err,rows){
           if (err) {
-            console.log('error insert 1');
             reject(err);
             return;
           } else {
@@ -427,7 +407,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
             rows.idUser = idUser;
             rows.userRate = userRate;
             rows.currentDate = currentDate;
-            console.log(rows);
             resolve(rows);
           }
         });
@@ -440,13 +419,11 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
           var idUser2 = rows.idUser;
           var userRate2 = rows.userRate;
           var currentDate2 = rows.currentDate;
-          console.log('ex2 : ' + idExercice2);
 
           //SELECT count(rate_idExercice) as nbVote FROM rate WHERE rate_idExercice = 1;
           var query = "SELECT count(??) as ?? FROM ?? WHERE ?? = ?"
           var table = ["rate_idExercice", "nbVote", "rate", "rate_idExercice", rows.idExercice];
           query = mysql.format(query,table);
-          console.log(query);
           //prepare to add in rows and insert data
 
           connection.query(query, function(err,rows){
@@ -459,7 +436,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
               rows.idUser = idUser2;
               rows.userRate = userRate2;
               rows.currentDate = currentDate2;
-              console.log(rows);
               resolve(rows);
             }
           });
@@ -467,15 +443,11 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
 
         getNbVote.then((rows) => {
           //UPDATE RATE IN EXERCICE TABLE
-          console.log('final rows');
-          console.log(rows);
-          console.log(rows[0].nbVote);
           // INSERT INTO exercice (exer_rate) VALUES ();
            //UPDATE utilisateur SET nombreJetonUtilisateur = nombreJetonUtilisateur-10 WHERE idUtilisateur=2
           var query = "UPDATE ?? SET ?? = (((??*?)+?)/(?+1)) WHERE ?? = ?"
           var table = ["exercice", "exer_rate", "exer_rate", rows[0].nbVote, rows.userRate, rows[0].nbVote, "exer_id", rows.idExercice];
           query = mysql.format(query,table);
-          console.log(query);
           connection.query(query,function(err,rows){
               if (err) {
                   res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
@@ -514,10 +486,8 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     // INNER JOIN accomplished ON exercice.exer_id = accomplished.a_idExercice
     // WHERE a_idUser = 1 AND exer_name = 'ex1'
     var query = "SELECT * FROM ?? INNER JOIN  ON ??.?? = ??.?? WHERE ?? = ? AND ?? = TRIM(?)"
-    console.log(typeof req.body.exName);
     var table = ["exercice", "accomplished", "exercice", "exer_id", "accomplished", "a_idExercice", "a_idUser", req.body.idUser, "exer_name", req.body.exName];
     query = mysql.format(query,table);
-    console.log(query);
     connection.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
@@ -538,13 +508,11 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
         var query = "SELECT * FROM ?? WHERE ?? = ?";
         var table = ["user", "user_surname", req.params.nameUser];
         query = mysql.format(query,table);
-        console.log(query);
         connection.query(query,function(err,rows){
           if (err) {
             reject(err);
             return;
           } else {
-            console.log(rows[0]);
             // var infoUser = rows[0];
             // rows.infoUser = infoUser;
             resolve(rows);
@@ -554,10 +522,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
 
       getInfoUser.then((rows) => {
         var getFollows = new Promise((resolve, reject) => {
-          console.log('next');
-          console.log('idUser : ' + req.params.idUser);
-          console.log(rows);
-
           var user_id = rows[0].user_id;
           var user_avatar = rows[0].user_avatar;
           var user_surname = rows[0].user_surname;
@@ -574,17 +538,13 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
               reject(err);
               return;
             } else {
-              console.log('next');
               rows.user_id = user_id;
               rows.user_avatar = user_avatar;
               rows.user_surname = user_surname;
-              console.log(rows[0].result);
               rows.followers = rows[0].result;
               rows.following = rows[1].result;
               (rows[2].result == 1) ? rows.isFollow = true : rows.isFollow = false;
               (rows[2].result == 1 && rows[3].result == 1) ? rows.reciproque = true : rows.reciproque = false;
-              console.log(rows);
-              var toto = rows;
               // resolve(rows);
               res.status(200).json({"Error" : false, "code" : 200, "Message" : "Success",
                 "Result" : {
@@ -600,20 +560,6 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
             }
           });
         });
-        /*
-        getFollows.then((rows) => {
-          console.log('toto');
-          console.log(rows);
-          var toto = rows;
-          console.log(toto);
-          if (!rows) {
-            return res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
-          } else {
-            console.log('blbl');
-            return res.status(201).json({"Error" : false, "code" : 200, "Message" : "Success", "Result" : toto});
-          }
-        });
-        */
       });
     } catch (errr) {
       res.status(500).json({"Error" : true, "Message" : "Error" });
