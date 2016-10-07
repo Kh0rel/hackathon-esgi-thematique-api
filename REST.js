@@ -82,7 +82,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "SELECT count(*) as auth FROM ?? WHERE ?? = ? AND ?? = ? UNION SELECT ?? FROM ?? WHERE ?? = ? AND ?? = ?";
     var table = ["user", "user_mail", req.body.email, "user_pwd", req.body.pwd, "user_id", "user", "user_mail", req.body.email, "user_pwd", req.body.pwd];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
       if (err) {
           res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
       } else {
@@ -109,7 +109,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
             var query = "SELECT * FROM ?? WHERE ?? = ?"
             var table = ["user", "user_mail", req.body.email];
             query = mysql.format(query,table);
-            connection.query(query,function(err,rows){
+            pool.query(query,function(err,rows){
               if (err) {
                 reject(err);
                 return;
@@ -135,7 +135,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
               var query = "INSERT INTO ?? (??, ??, ??, ??, ??, ??, ??, ??, ??) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
               var table = ["user", "user_firstName", "user_lastName", "user_subDate", "user_pwd", "user_avatar", "user_age", "user_mail", "user_surname", "user_isPremium", req.body.firstName, req.body.lastName, currentDate, req.body.pwd, req.body.avatar, req.body.age, req.body.email, req.body.surname, 0];
               query = mysql.format(query,table);
-              connection.query(query,function(err,rows){
+              pool.query(query,function(err,rows){
                   if (err) {
                       res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
                   } else {
@@ -160,7 +160,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "SELECT * FROM ??"
     var table = ["item"];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
         } else {
@@ -176,7 +176,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "SELECT * FROM ?? INNER JOIN ?? WHERE ??.?? = ??.?? AND ?? = ?;"
     var table = ["userBought", "item", "userBought", "userBought_item", "item", "item_id", "userBought_user", req.params.idUser ];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
         } else {
@@ -200,7 +200,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
           var idItem = req.body[i].idItem;
           var idUser = req.body[i].idUser;
           var quantity = req.body[i].quantity;
-          connection.query(query, function(err,rows){
+          pool.query(query, function(err,rows){
             if (err) {
               reject(err);
               return;
@@ -220,7 +220,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
           var query = "UPDATE ?? SET ?? = ?? - ? WHERE ?? = ?"
           var table = ["item", "item_quantity", "item_quantity", rows.quantity, "item_id", rows.idItem];
           query = mysql.format(query,table);
-          connection.query(query,function(err,rows){
+          pool.query(query,function(err,rows){
               if (err) {
                   res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
               } else {
@@ -247,7 +247,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
     var table = ["user", req.body.toUpdate , req.body.value, "user_id" , req.body.idUser];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows) {
+    pool.query(query,function(err,rows) {
        if (err) {
          if (!req.body.toUpdate || !req.body.value || !req.body.idUser) {
            res.status(409).json({"Error" : true, "code" : 409, "Message" : "Some field(s) are missing"});
@@ -282,7 +282,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "SELECT fr_follow as following FROM ?? WHERE ?? = ?"
     var table = ["friend", "fr_following", req.params.idUser];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
         } else {
@@ -298,7 +298,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "INSERT INTO ?? (??, ??, ??) VALUES (?, ?, ?)"
     var table = ["friend", "fr_follow", "fr_following", "fr_date", req.params.idUser, req.params.toFollow, currentDate];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
         } else {
@@ -317,7 +317,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
         var query = "SELECT ?? FROM ?? WHERE ?? = ? AND ?? = ?"
         var table = ["fr_id", "friend", "fr_follow", req.params.idUser, "fr_following", req.params.toUnFollow];
         query = mysql.format(query,table);
-        connection.query(query, function(err,rows){
+        pool.query(query, function(err,rows){
           if (err) {
             reject(err);
             return;
@@ -332,7 +332,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
         var query = "DELETE FROM ?? WHERE ?? = ?"
         var table = ["friend", "fr_id", rows[0].fr_id];
         query = mysql.format(query,table);
-        connection.query(query,function(err,rows){
+        pool.query(query,function(err,rows){
             if (err) {
                 res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
             } else {
@@ -355,7 +355,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "SELECT * FROM ?? WHERE ?? = ?"
     var table = ["user", "user_surname", req.params.user];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
         } else {
@@ -375,7 +375,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "SELECT ??, ??, ??, ??, ??, ??, ??, ?? FROM ?? WHERE ?? = ?"
     var table = ["user_avatar", "user_age", "user_firstName", "user_lastName", "user_mail", "user_points", "user_surname", "user_subDate", "user", "user_id", req.params.idUser];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
         } else {
@@ -397,7 +397,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
         var query = "INSERT INTO ?? (??, ??, ??, ??) VALUES (?, ?, ?, ?)"
         var table = ["rate", "rate_idExercice", "rate_idUser", "rate_value", "rate_date", req.body.idExercice, req.body.idUser, req.body.userRate, currentDate];
         query = mysql.format(query,table);
-        connection.query(query,function(err,rows) {
+        pool.query(query,function(err,rows) {
           if (err) {
             reject(err);
             return;
@@ -426,7 +426,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
           query = mysql.format(query,table);
           //prepare to add in rows and insert data
 
-          connection.query(query, function(err,rows){
+          pool.query(query, function(err,rows){
             if (err) {
               reject(err);
               return;
@@ -448,7 +448,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
           var query = "UPDATE ?? SET ?? = (((??*?)+?)/(?+1)) WHERE ?? = ?"
           var table = ["exercice", "exer_rate", "exer_rate", rows[0].nbVote, rows.userRate, rows[0].nbVote, "exer_id", rows.idExercice];
           query = mysql.format(query,table);
-          connection.query(query,function(err,rows){
+          pool.query(query,function(err,rows){
               if (err) {
                   res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
               } else {
@@ -472,7 +472,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? INNER JOIN ?? ON ??.?? = ??.??"
     var table = ["exercice", "location", "exercice", "exer_idLocation", "location", "loc_id", "position", "exercice", "exer_idPosition", "position", "pos_id"];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
         } else {
@@ -488,7 +488,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "SELECT * FROM ?? INNER JOIN  ON ??.?? = ??.?? WHERE ?? = ? AND ?? = TRIM(?)"
     var table = ["exercice", "accomplished", "exercice", "exer_id", "accomplished", "a_idExercice", "a_idUser", req.body.idUser, "exer_name", req.body.exName];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
         if (err) {
             res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
         } else {
@@ -508,7 +508,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
         var query = "SELECT * FROM ?? WHERE ?? = ?";
         var table = ["user", "user_surname", req.params.nameUser];
         query = mysql.format(query,table);
-        connection.query(query,function(err,rows){
+        pool.query(query,function(err,rows){
           if (err) {
             reject(err);
             return;
@@ -532,7 +532,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
           var table = ["fr_id", "friend", "fr_follow", req.params.idUser, "fr_id", "friend", "fr_following", rows[0].user_id, "fr_id", "friend", "fr_follow", req.params.idUser,
           "fr_following", rows[0].user_id, "fr_id", "friend", "fr_follow", rows[0].user_id, "fr_following", req.params.idUser];
           query = mysql.format(query,table);
-          connection.query(query,function(err,rows){
+          pool.query(query,function(err,rows){
             if(err) {
               res.status(400).json({"Error" : true, "code": 400 ,"Message" : "Fields already in the table utilisateur_has_paris" });
               reject(err);
@@ -572,7 +572,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "SELECT * FROM ?? INNER JOIN ?? ON ??.?? = ??.?? WHERE ?? in (1,2,3)"
     var table = ["exercice", "accomplished", "exercice", "exer_id", "accomplished", "a_idExercice", "a_idUser", req.params.listF];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
       if (err) {
         res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
       } else {
@@ -588,7 +588,7 @@ REST_ROUTER.prototype.handleRoutes = function(router,pool,md5) {
     var query = "INSERT INTO ?? (??, ??, ??) VALUES (?, ?, ?)"
     var table = ["accomplished", "a_idUser", "a_idExercice", "a_date", req.body.idUser, req.body.idExercice, currentDate];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){
+    pool.query(query,function(err,rows){
       if (err) {
         res.status(500).json({"Error" : true, "Message" : "Error executing MySQL query"});
       } else {
